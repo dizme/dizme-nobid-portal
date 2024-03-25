@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AvailableCredential } from '@/types/credentials';
 import { getIssuerDid, getIssuerJwk } from './issuerDids';
 
-const getOfferUrl = async (c: AvailableCredential) => {
+const getOfferUrl = async (c: AvailableCredential, userInfo: {nationality: string, over18: boolean}) => {
   const public_vc_repo = process.env.PUBLIC_VC_REPO;
   const public_issuer = process.env.PUBLIC_ISSUER;
 
@@ -32,6 +32,19 @@ const getOfferUrl = async (c: AvailableCredential) => {
     // console.log('issuanceKey', issuanceKey);
     // console.log('issuanceKey', JSON.stringify(issuanceKey));
     // console.log('mapping', mapping);
+    console.log('userInfo', userInfo);
+
+    for (const key in offer.credentialSubject) {
+      console.log('key', key);
+      if (key == "nationality") {
+        offer.credentialSubject[key] = userInfo.nationality;
+      }
+      if (key == "age_over_18") {
+        offer.credentialSubject[key] = userInfo.over18;
+      }
+    }
+
+    console.log('offer', offer);
     
     let payload = {
       'issuerDid': issuerDid,

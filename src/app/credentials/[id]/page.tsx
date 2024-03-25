@@ -23,6 +23,8 @@ export default async function CredentialDetailsPage(
     );
   }
 
+  const userInfo = session.user;
+
   const credentials = await getCredentials();
   const credential: AvailableCredential = credentials.find(cred => cred.id === params.id) as AvailableCredential;
 
@@ -36,8 +38,11 @@ export default async function CredentialDetailsPage(
   }
 
   const offerUrl = await getOfferUrl(
-    credential
+    credential,
+    userInfo
   );
+
+  const claim = issuedClaim(credential, userInfo);
 
   function createWebWalletUri() {
     const path = "api/siop/initiateIssuance";
@@ -52,8 +57,14 @@ export default async function CredentialDetailsPage(
         {/* Commented out for simplicity; replace with your BackButton component if needed */}
         {/* <BackButton /> */}
         <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl mt-5">
-          Claim Your Credential
+          Claim Your {credential.title}
         </h1>
+        <div className='text-gray-900 sm:text-xl lg:text-xl mt-5'>
+          This credential contains the following claim:
+        </div>
+        <pre className="text-sm text-gray-600 mt-5">
+          {claim?.name}: {claim?.value}
+          </pre>
         <div className="my-10 inline-block">
           <QRCode
             value={offerUrl.data}
@@ -73,5 +84,26 @@ export default async function CredentialDetailsPage(
     </div>
 
   )
+}
+
+function issuedClaim(credential: AvailableCredential, userInfo: { over18: boolean; nationality: string; }) {
+  let claim;
+  if (credential.title === 'NationalityCredential') {
+    claim = {
+      name: 'nationality',
+      value: userInfo.nationality
+    };
+  } else if (credential.title === 'LegalAgeCredential') {
+    claim = {
+      name: 'age_over_18',
+      value: userInfo.over18
+    };
+  } else {
+    claim = {
+      name: 'unknown_claim',
+      value: JSON.stringify(userInfo)
+    };
+  }
+  return claim;
 }
 

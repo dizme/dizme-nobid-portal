@@ -1,7 +1,7 @@
 import { AvailableCredential } from '@/types/credentials';
 
 export async function getCredentials() {
-  const credentialsUrl = `${process.env.PUBLIC_VC_REPO}/api/list`;
+  const credentialsUrl = `${process.env.PUBLIC_VC_REPO}/api/nobid/list`;
   const response = await fetch(credentialsUrl);
   // console.log("Response status:", response.status);
   const credentialsNames = await response.json();
@@ -15,7 +15,7 @@ async function getAvailableCredentials(credentialsNames: string[]) {
 
   try {
     const credentialsResponse = await Promise.all(credentialsNames.map(async (credential) => {
-      const response = await fetch(`${PUBLIC_VC_REPO}/api/vc/${credential}`);
+      const response = await fetch(`${PUBLIC_VC_REPO}/api/nobid/${credential}`);
       const data = await response.json();
       return {
         id: credential,
