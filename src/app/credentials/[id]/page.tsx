@@ -60,11 +60,14 @@ export default async function CredentialDetailsPage(
           Claim Your {credential.title}
         </h1>
         <div className='text-gray-900 sm:text-xl lg:text-xl mt-5'>
-          This credential contains the following claim:
+          This credential contains the following data:
         </div>
-        <pre className="text-sm text-gray-600 mt-5">
-          {claim?.name}: {claim?.value}
+          <pre className="text-left text-sm text-gray-600 mt-5">
+            {JSON.stringify(credential.offer, null, 2)}
           </pre>
+        <div className='text-gray-900 sm:text-xl lg:text-xl mt-5'>
+          Claim the credential by scanning the QR code below with your wallet app or by clicking the button below to open the web wallet.
+        </div>
         <div className="my-10 inline-block">
           <QRCode
             value={offerUrl.data}
